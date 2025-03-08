@@ -1,0 +1,6 @@
+@CheckResx_HostAddress = http://localhost:5118
+
+GET {{CheckResx_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
