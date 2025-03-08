@@ -1,5 +1,5 @@
 ﻿@page
-@model CheckResx.Pages.IndexModel // Updated to match new namespace
+@model CheckResx.Pages.IndexModel
 @inject CheckResx.Services.ResxComparisonService ResxComparisonService
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -7,46 +7,111 @@
     ViewData["Title"] = "Compare .resx Files";
 }
 
-<h1>@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <!-- Bootstrap CSS via CDN with cache busting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css?v=1" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Inline CSS for diagnostics and fallbacks -->
+    <style>
+        .bootstrap-test {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
 
-<form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
-    <div class="mb-3">
-        <label class="form-label">Upload .resx files</label>
-        <input type="file" class="form-control" name="files" multiple accept=".resx" />
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-5 {
+            margin-bottom: 3rem;
+        }
+
+        .form-control-lg {
+            font-size: 1.25rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 1.25rem;
+        }
+
+        .sticky-header thead th {
+            position: sticky;
+            top: 0;
+            background-color: #343a40;
+            color: white;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-5 fw-bold text-primary">@ViewData["Title"]</h1>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Upload .resx files</label>
+                        <input type="file" class="form-control form-control-lg shadow-sm" name="files" multiple accept=".resx" />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm">Compare</button>
+                </form>
+            </div>
+        </div>
+
+        @if (Model.Results != null)
+        {
+            <h2 class="mt-5 mb-4 fw-bold">Comparison Results</h2>
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-striped table-bordered sticky-header">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Key</th>
+                            @foreach (var file in Model.FileNames)
+                            {
+                                <th>@file</th>
+                            }
+                            <th>Missing From</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in Model.Results)
+                        {
+                            <tr>
+                                <td>@result.Key</td>
+                                @foreach (var file in Model.FileNames)
+                                {
+                                    <td>@(result.Values.ContainsKey(file) ? result.Values[file] : "-")</td>
+                                }
+                                <td>@string.Join(", ", result.MissingFrom)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
     </div>
-    <button type="submit" class="btn btn-primary">Compare</button>
-</form>
 
-@if (Model.Results != null)
-{
-    <h2>Comparison Results</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Key</th>
-                @foreach (var file in Model.FileNames)
-                {
-                    <th>@file</th>
-                }
-                <th>Missing From</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var result in Model.Results)
-            {
-                <tr>
-                    <td>@result.Key</td>
-                    @foreach (var file in Model.FileNames)
-                    {
-                        <td>@(result.Values.ContainsKey(file) ? result.Values[file] : "-")</td>
-                    }
-                    <td>@string.Join(", ", result.MissingFrom)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    <!-- Bootstrap JS Bundle via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>
