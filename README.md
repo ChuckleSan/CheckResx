@@ -1,7 +1,3 @@
-<img src="https://github.com/ChuckleSan/CheckResx/blob/master/CheckResx/wwwroot/assets/earth_1779383.png" align="right" height="64px" />
-
-# CheckResx
-
 <img src="https://github.com/ChuckleSan/CheckResx/blob/master/CheckResx/wwwroot/assets/resx.png" align="right" height="64px" />
 
 # CheckResx
